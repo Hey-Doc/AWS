@@ -1,0 +1,1 @@
+aws iot register-certificate-without-ca --certificate-pem file://cert.pem --status ACTIVE

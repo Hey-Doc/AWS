@@ -1,0 +1,1 @@
+aws iot create-thing --thing-name stsafe-dummy

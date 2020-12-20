@@ -1,0 +1,395 @@
+[
+    {
+        "id": "d5196a2f.6ac8e8",
+        "type": "tab",
+        "label": "ST Discovery Board Dashboard",
+        "disabled": false,
+        "info": "ST Discovery Board Dashboard"
+    },
+    {
+        "id": "213d67d8.0a69f8",
+        "type": "mqtt in",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "topic": "dt/stm32l475e/sensor-data/topic",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "cf394855.951c28",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "5fb2a0af.1136c"
+            ]
+        ]
+    },
+    {
+        "id": "5fb2a0af.1136c",
+        "type": "json",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "cabdc168.99b4c",
+                "64f50e17.dc802",
+                "b3bc66e5.8ed798",
+                "cc952e9b.c9d6b",
+                "e86b31b9.332e9",
+                "f7114ba7.e77c38",
+                "58adccd2.5dc034"
+            ]
+        ]
+    },
+    {
+        "id": "cabdc168.99b4c",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Humidity",
+        "func": "msg.payload = msg.payload.Hum\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 580,
+        "y": 120,
+        "wires": [
+            [
+                "a5e84262.28e9e"
+            ]
+        ]
+    },
+    {
+        "id": "a5e84262.28e9e",
+        "type": "ui_gauge",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "group": "49f3d724.af80d8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "% RH",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 740,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "64f50e17.dc802",
+        "type": "debug",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 390,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "b3bc66e5.8ed798",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Pressure",
+        "func": "msg.payload = msg.payload.Press\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 220,
+        "wires": [
+            [
+                "515e1a5.b4afce4"
+            ]
+        ]
+    },
+    {
+        "id": "515e1a5.b4afce4",
+        "type": "ui_gauge",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "group": "49f3d724.af80d8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pressure",
+        "label": "hPa",
+        "format": "{{value}}",
+        "min": "260",
+        "max": "1260",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 780,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "41974def.3b8ca4",
+        "type": "ui_text",
+        "z": "d5196a2f.6ac8e8",
+        "group": "eda7d9b1.cf9238",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "ACCELERATION (RAW VALUES)",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 920,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "792d927b.e50b2c",
+        "type": "ui_text",
+        "z": "d5196a2f.6ac8e8",
+        "group": "eda7d9b1.cf9238",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "GYROSCOPE",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 880,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f873c981.99a0d8",
+        "type": "ui_text",
+        "z": "d5196a2f.6ac8e8",
+        "group": "eda7d9b1.cf9238",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "MAGNETOMETER",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "x": 890,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "cc952e9b.c9d6b",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Accelerometer",
+        "func": "msg.payload = \n{\nX: msg.payload.Accel_X,\nY: msg.payload.Accel_Y,\nZ: msg.payload.Accel_Z\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 620,
+        "y": 300,
+        "wires": [
+            [
+                "41974def.3b8ca4"
+            ]
+        ]
+    },
+    {
+        "id": "e86b31b9.332e9",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Gyroscope",
+        "func": "msg.payload = \n{\nX: msg.payload.Gyro_X,\nY: msg.payload.Gyro_Y,\nZ: msg.payload.Gyro_Z\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 380,
+        "wires": [
+            [
+                "792d927b.e50b2c"
+            ]
+        ]
+    },
+    {
+        "id": "f7114ba7.e77c38",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Magnetometer",
+        "func": "msg.payload = \n{\nX: msg.payload.Magn_X,\nY: msg.payload.Magn_Y,\nZ: msg.payload.Magn_Z\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 620,
+        "y": 460,
+        "wires": [
+            [
+                "f873c981.99a0d8"
+            ]
+        ]
+    },
+    {
+        "id": "bceef147.6c1ac",
+        "type": "mqtt out",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "topic": "$aws/things/stsafe-board02-01/shadow/update",
+        "qos": "1",
+        "retain": "",
+        "broker": "cf394855.951c28",
+        "x": 440,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "cb560f01.87ca5",
+        "type": "ui_switch",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "label": "LED CONTROL",
+        "tooltip": "",
+        "group": "49f3d724.af80d8",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "$aws/things/TI_CC3220SFLAUNCHPAD/shadow/update",
+        "style": "",
+        "onvalue": "{\"state\":{\"desired\":{\"welcome\":\"aws-iot\",\"powerOn\":1}}}",
+        "onvalueType": "json",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "{\"state\":{\"desired\":{\"welcome\":\"aws-iot\",\"powerOn\":0}}}",
+        "offvalueType": "json",
+        "officon": "",
+        "offcolor": "",
+        "x": 120,
+        "y": 600,
+        "wires": [
+            [
+                "bceef147.6c1ac"
+            ]
+        ]
+    },
+    {
+        "id": "58adccd2.5dc034",
+        "type": "function",
+        "z": "d5196a2f.6ac8e8",
+        "name": "Proximity",
+        "func": "msg.payload = msg.payload.Proxi\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 610,
+        "y": 520,
+        "wires": [
+            [
+                "792aa372.3e100c"
+            ]
+        ]
+    },
+    {
+        "id": "792aa372.3e100c",
+        "type": "ui_gauge",
+        "z": "d5196a2f.6ac8e8",
+        "name": "",
+        "group": "49f3d724.af80d8",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Proximity",
+        "label": "units",
+        "format": "{{msg.payload}}",
+        "min": 0,
+        "max": "30",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "2",
+        "seg2": "10",
+        "x": 830,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "cf394855.951c28",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "US-WEST",
+        "broker": "a2g9jryq5ap9fi-ats.iot.us-west-2.amazonaws.com",
+        "port": "8883",
+        "tls": "743b6e61.b0756",
+        "clientid": "",
+        "usetls": true,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "49f3d724.af80d8",
+        "type": "ui_group",
+        "z": "",
+        "name": "ENVIRONMENT SENSOR DATA ",
+        "tab": "a3c28a7.04bed78",
+        "disp": true,
+        "width": "6",
+        "collapse": true
+    },
+    {
+        "id": "eda7d9b1.cf9238",
+        "type": "ui_group",
+        "z": "",
+        "name": "MOTION SENSOR DATA",
+        "tab": "a3c28a7.04bed78",
+        "disp": true,
+        "width": "12",
+        "collapse": true
+    },
+    {
+        "id": "743b6e61.b0756",
+        "type": "tls-config",
+        "z": "",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "stsafe-dummy.cert.pem",
+        "keyname": "stsafe-dummy.private.key",
+        "caname": "AmazonRootCA1.pem",
+        "servername": "",
+        "verifyservercert": true
+    },
+    {
+        "id": "a3c28a7.04bed78",
+        "type": "ui_tab",
+        "z": "",
+        "name": "STM32 IOT Discovery Board",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

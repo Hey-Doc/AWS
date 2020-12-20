@@ -1,0 +1,1 @@
+aws iot attach-policy --policy-name "STSafeThingPolicy" --target "arn:aws:iot:us-west-2:xxxxx:cert/yyyy"

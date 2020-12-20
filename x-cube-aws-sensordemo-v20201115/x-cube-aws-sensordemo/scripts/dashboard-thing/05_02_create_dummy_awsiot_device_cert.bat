@@ -1,0 +1,1 @@
+aws iot create-keys-and-certificate --certificate-pem-outfile "stsafe-dummy.cert.pem"  --public-key-outfile "stsafe-dummy.public.key" --private-key-outfile "stsafe-dummy.private.key"

@@ -1,0 +1,1 @@
+aws iot create-policy --policy-name STSafeThingPolicy --policy-document file://stsafe-thing-policy.json

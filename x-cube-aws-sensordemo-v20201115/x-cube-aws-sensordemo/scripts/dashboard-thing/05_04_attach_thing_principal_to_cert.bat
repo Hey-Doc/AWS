@@ -1,0 +1,1 @@
+aws iot attach-thing-principal --thing-name "stsafe-dummy" --principal "arn:aws:iot:us-west-2:xxxx:cert/yyyyy"

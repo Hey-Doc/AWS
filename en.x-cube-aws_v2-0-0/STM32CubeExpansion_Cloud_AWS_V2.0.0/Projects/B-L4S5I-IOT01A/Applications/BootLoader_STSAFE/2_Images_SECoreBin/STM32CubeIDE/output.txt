@@ -1,0 +1,5 @@
+prebuild.sh : started
+../../../Binary/ECCKEY.txt
+prepareimage with windows executeable
+ C:/en.x-cube-aws_v2-0-0/STM32CubeExpansion_Cloud_AWS_V2.0.0/Middlewares/ST/STM32_Secure_Engine/Utilities/KeysAndImages/win/prepareimage/prepareimage.exe
+SECBOOT_X509_ECDSA_WITHOUT_ENCRYPT_SHA256 selected
