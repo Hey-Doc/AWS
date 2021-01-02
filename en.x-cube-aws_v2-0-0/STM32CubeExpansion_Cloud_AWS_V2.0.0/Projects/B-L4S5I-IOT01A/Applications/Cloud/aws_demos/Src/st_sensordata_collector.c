@@ -25,6 +25,7 @@ SOFTWARE.
 #include "st_sensordata_collector.h"
 
 #include "main.h"
+#include "stm32l4xx_hal_conf.h"
 #include "stm32l475e_iot01_accelero.h"
 #include "stm32l475e_iot01_psensor.h"
 #include "stm32l475e_iot01_gyro.h"
@@ -35,7 +36,7 @@ SOFTWARE.
 #include "math.h"
 #define buflen 100
 
-#define TEMPERATURE_TASK_READ_DELAY_MS  3000
+#define TEMPERATURE_TASK_READ_DELAY_MS  100
 
 typedef enum {
 	LONG_RANGE 		= 0, /*!< Long range mode */
@@ -157,12 +158,7 @@ void onboardSensorReaderTask() {
 
 	int j = 0;
 	//float temperatureC;
-	float TEMPERATURE_Value;
-	float HUMIDITY_Value;
-	float PRESSURE_Value;
 	int16_t ACC_Value[3];
-	float GYR_Value[3];
-	int16_t MAG_Value[3];
         float PROXIMITY_Value;
 
 	int snprintfreturn = 0;
@@ -174,7 +170,7 @@ void onboardSensorReaderTask() {
 
 	do {
 		vTaskDelay(pdMS_TO_TICKS(TEMPERATURE_TASK_READ_DELAY_MS));
-
+		while(!falling){
 		BSP_ACCELERO_AccGetXYZ(ACC_Value);
                 PROXIMITY_Value = BSP_Proximity_Read();
                 
@@ -211,9 +207,11 @@ void onboardSensorReaderTask() {
 		  if(CycTrue){
 		  	detect(stdV, meanV, stdM, meanM);
 		  }
-
+		  HAL_Delay(100);
+		}
+		falling =0;
 		/* Format data for transmission to AWS */
-		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling?: %d\n", falling);
+		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling, meanM: %.3f\n", meanM);
 
 		IotLogInfo(
 				"Publishing sensor data as json string: %s of length [ %d]\n",
