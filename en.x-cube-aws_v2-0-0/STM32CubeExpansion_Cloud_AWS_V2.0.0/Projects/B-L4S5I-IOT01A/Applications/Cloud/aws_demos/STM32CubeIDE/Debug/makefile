@@ -96,8 +96,8 @@ all:
 main-build: B-L4S5I-IOT01_aws_demos.elf secondary-outputs
 
 # Tool invocations
-B-L4S5I-IOT01_aws_demos.elf: $(OBJS) $(USER_OBJS) C:\en.x-cube-aws_v2-0-0\STM32CubeExpansion_Cloud_AWS_V2.0.0\Projects\B-L4S5I-IOT01A\Applications\Cloud\aws_demos\STM32CubeIDE\STM32L4S5VITX_FLASH_sbsfu.ld
-	arm-none-eabi-gcc -z max-page-size=0x200 -o "B-L4S5I-IOT01_aws_demos.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\en.x-cube-aws_v2-0-0\STM32CubeExpansion_Cloud_AWS_V2.0.0\Projects\B-L4S5I-IOT01A\Applications\Cloud\aws_demos\STM32CubeIDE\STM32L4S5VITX_FLASH_sbsfu.ld" --specs=nosys.specs -Wl,-Map="B-L4S5I-IOT01_aws_demos.map" -Wl,--gc-sections -static -L../../../../BootLoader_STSAFE/2_Images_SBSFU/STM32CubeIDE/B-L4S5I-IOT01_2_Images_SBSFU/Debug -Xlinker -L ../../../../BootLoader_STSAFE/Linker_Common/STM32CubeIDE --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+B-L4S5I-IOT01_aws_demos.elf: $(OBJS) $(USER_OBJS) D:\A\en.x-cube-aws_v2-0-0\STM32CubeExpansion_Cloud_AWS_V2.0.0\Projects\B-L4S5I-IOT01A\Applications\Cloud\aws_demos\STM32CubeIDE\STM32L4S5VITX_FLASH_sbsfu.ld
+	arm-none-eabi-gcc -z max-page-size=0x200 -o "B-L4S5I-IOT01_aws_demos.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\A\en.x-cube-aws_v2-0-0\STM32CubeExpansion_Cloud_AWS_V2.0.0\Projects\B-L4S5I-IOT01A\Applications\Cloud\aws_demos\STM32CubeIDE\STM32L4S5VITX_FLASH_sbsfu.ld" --specs=nosys.specs -Wl,-Map="B-L4S5I-IOT01_aws_demos.map" -Wl,--gc-sections -static -L../../../../BootLoader_STSAFE/2_Images_SBSFU/STM32CubeIDE/B-L4S5I-IOT01_2_Images_SBSFU/Debug -Xlinker -L ../../../../BootLoader_STSAFE/Linker_Common/STM32CubeIDE --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
