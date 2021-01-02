@@ -25,7 +25,6 @@ SOFTWARE.
 #include "st_sensordata_collector.h"
 
 #include "main.h"
-#include "stm32l4xx_hal_conf.h"
 #include "stm32l475e_iot01_accelero.h"
 #include "stm32l475e_iot01_psensor.h"
 #include "stm32l475e_iot01_gyro.h"
@@ -33,9 +32,6 @@ SOFTWARE.
 #include "stm32l475e_iot01_tsensor.h"
 #include "stm32l475e_iot01_magneto.h"
 #include "vl53l0x_api.h"
-#include "math.h"
-#define buflen 100
-#define SAMPLE_NUMBER 100
 
 #define TEMPERATURE_TASK_READ_DELAY_MS  100
 
@@ -50,178 +46,6 @@ extern I2C_HandleTypeDef hI2cHandler;
 VL53L0X_Dev_t VL53L0XDev;
 VL53L0X_RangingMeasurementData_t RangingMeasurementData;
 int LeakyFactorFix8 = (int)( 0.6 *256);
-
-int16_t axyz[3]={};
-float Axyz[3]={};
-float buffer_a[buflen][3]={};
-float V[3]={0,0,0};
-float pastAxyz[3]={0,0,0};
-float magV[10]={};
-float magM[10]={};
-float meanV=0.0;
-float stdV=0.0;
-float meanM=0.0;
-float stdM=0.0;
-float sizV=0.0;
-int cyc = 0;
-int CycTrue = 0;
-int32_t ADC_data[2]={0,0};
-int32_t emg_prev;
-int32_t emg;
-int32_t f[100] = {0, 0, 0, 0, 0};
-int32_t g[100] = {0, 0, 0, 0, 0};
-int32_t i = 5;
-int muscle_work = 1;
-int heart_work = 1;
-uint16_t heartrate[1000];
-int32_t heart_cnt = 0;
-uint16_t value[SAMPLE_NUMBER] = {0};
-uint8_t valueCount_=255;
-uint32_t nowTim=0,lastTim=0;
-char msg[100];
-int falling=0;
-int heart_rate=0;
-char hrstate;
-
-float magnitude(float *vec)
-{
-  return sqrt(pow(vec[0],2) + pow(vec[1],2) + pow(vec[2],2));
-}
-float mean(float *vec)
-{
-  float sum=0.0;
-  for (int i=0;i<10;i++){sum+=vec[i];}
-  return sum/10;
-}
-float stnd(float *vec)
-{
-  float s=0;
-  float m=mean(vec);
-  for (int i=0;i<10;i++){s+=pow((vec[i]-m),2);}
-  return sqrt(s/10);
-}
-void detect(float stdv, float meanv, float stdm, float meanm)
-{
-	if(meanv<=-0.131){
-		if(stdm<=0.055){
-			falling=0;
-		}
-		else{
-			falling=1;
-		}
-	}
-	else{
-		if(meanm<=1.11){
-			falling=1;
-		}
-		else{
-			falling=0;
-		}
-	}
-}
-int msh(void){
-	  emg_prev = emg;
-	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_PollForConversion(&hadc1, 10);
-	  ADC_data[0] = HAL_ADC_GetValue(&hadc1);
-	  HAL_ADC_Start(&hadc1);
-	  HAL_ADC_PollForConversion(&hadc1, 10);
-	  ADC_data[1] = HAL_ADC_GetValue(&hadc1);
-	  emg = ADC_data[0];
-	  int32_t err = (emg - emg_prev > 0)?(emg - emg_prev):(emg_prev - emg);
-	  if (err <= 20 * 4) {
-	  	f[i] = f[i - 1] + 1;
-	  }
-	  else {
-	  	f[i] = 0;
-	  }
-	  if (emg_prev + 10 * 4 > emg) {
-		g[i] = g[i - 1] + 1;
-	  }
-	  else {
-	  	g[i] = 0;
-	  }
-	  muscle_work = (f[i] >= 5 || g[i] >= 5)?1:0;
-	  i++;
-	  if (i == 100) {
-	  	i = 5;
-	  	for (int j = 0; j < 5; j++) {
-	  		f[j] = f[j+95];
-	  		g[j] = g[j+95];
-	  	}
-	  }
-	  valueCount_++;
-	  if (valueCount_ >= SAMPLE_NUMBER) valueCount_ = 0;
-	  value[valueCount_] = ADC_data[1];
-
-	  static uint8_t timeFlag;
-	  static unsigned long sampleTime[10];
-	  unsigned long valueTime_;
-	  uint8_t count_;
-	  if (valueCount_) {
-	  count_ = valueCount_ - 1;
-	  } else {
-	  	count_ = SAMPLE_NUMBER - 1;
-	  }
-	  if((value[valueCount_] > 1000 * 4) && (value[count_] < 20 * 4)) {
-	  	nowTim = HAL_GetTick();
-	  	uint32_t difTime = nowTim - lastTim;
-	  	lastTim = nowTim;
-	  	if(difTime > 300 || difTime < 2000) {
-	  		sampleTime[timeFlag++] = difTime;
-	  		if (timeFlag > 9) timeFlag = 0;
-	  		}
-	  	    if (0 == sampleTime[9]) {
-	  		//continue;
-	  		sampleTime[9] = sampleTime[9];
-	  	}
-
-	  	uint32_t Arrange[10] = {0};
-	  	for (int i = 0; i < 10; i++) {
-	  		Arrange[i] = sampleTime[i];
-	  	}
-	  			uint32_t Arrange_=0;
-	  			for(int i=9;i>0;i--){
-	  				for(int j=0;j<i;j++){
-	  					if(Arrange[j] > Arrange[j+1]){
-	  						Arrange_ = Arrange[j];
-	  						Arrange[j] = Arrange[j+1];
-	  						Arrange[j+1] = Arrange_;
-	  					}
-	  				}
-	  			}
-	  			if((Arrange[7]-Arrange[3])>120){
-	          //continue;
-	  				Arrange[7] = Arrange[7];
-	  			}
-
-	  			Arrange_ = 0;
-	  			for(int i=3;i<=7;i++){
-	  				Arrange_ += Arrange[i];
-	  			}
-
-	  			valueTime_ = 300000/Arrange_;///<60*1000*(7-2)
-	  			heartrate[heart_cnt] = (uint16_t)valueTime_;
-	  			heart_cnt++;
-	  			if (heart_cnt >= 1000) heart_cnt = 0;
-	  			if ((uint16_t)valueTime_ > 100) {
-	  				heart_work = 0;
-	  				for (int i = 1; i <= 6; i++) {
-	  					int k = heart_cnt - i;
-	  					if (k < 0) k += 1000;
-	  					if (heartrate[k] > 100) continue;
-	  					else {
-	  						heart_work = 1;
-	  						break;
-	  					}
-	  				}
-	  			}
-	  			if ((uint16_t)valueTime_ >= 60 && (uint16_t)valueTime_ <= 100) heart_work =1;
-	  		}
-	  if(heart_work==1) hrstate="N";
-	  else hrstate="F";
-	  return heartrate[heart_cnt>0?(heart_cnt-1):999];
-}
 
 int BSP_Proximity_Init();
 int SetupSingleShot(RangingConfig_e rangingConfig);
@@ -279,8 +103,13 @@ void onboardSensorReaderTask() {
 
 	int j = 0;
 	//float temperatureC;
+	float TEMPERATURE_Value;
+	float HUMIDITY_Value;
+	float PRESSURE_Value;
 	int16_t ACC_Value[3];
-    float PROXIMITY_Value;
+	float GYR_Value[3];
+	int16_t MAG_Value[3];
+        float PROXIMITY_Value;
 
 	int snprintfreturn = 0;
 
@@ -292,61 +121,30 @@ void onboardSensorReaderTask() {
 	do {
 		vTaskDelay(pdMS_TO_TICKS(TEMPERATURE_TASK_READ_DELAY_MS));
 
-		while(!falling){
-		//=============accelero=========================
+		TEMPERATURE_Value = BSP_TSENSOR_ReadTemp();
+		HUMIDITY_Value = BSP_HSENSOR_ReadHumidity();
+		PRESSURE_Value = BSP_PSENSOR_ReadPressure();
 		BSP_ACCELERO_AccGetXYZ(ACC_Value);
-        PROXIMITY_Value = BSP_Proximity_Read();
+		BSP_GYRO_GetXYZ(GYR_Value);
+		BSP_MAGNETO_GetXYZ(MAG_Value);
+                PROXIMITY_Value = BSP_Proximity_Read();
                 
 		IotLogInfo("Accelerometer [X: %d] ", ACC_Value);
 
 		pSensorPayload = pvPortMalloc(sizeof(char) * SENSOR_STATUS_MSG_BUF_LEN);
 
-		  Axyz[0]=(float)19.62*ACC_Value[0]/16384;
-		  Axyz[1]=(float)19.62*ACC_Value[1]/16384;
-		  Axyz[2]=(float)19.62*ACC_Value[2]/16384;
-		  pastAxyz[0]=buffer_a[cyc][0];
-		  pastAxyz[1]=buffer_a[cyc][1];
-		  pastAxyz[2]=buffer_a[cyc][2];
-	      buffer_a[cyc][0]=Axyz[0];
-	  	  buffer_a[cyc][1]=Axyz[1];
-	  	  buffer_a[cyc][2]=Axyz[2];
-		  magM[cyc%10]=magnitude(Axyz);
-		  for (int i=0;i<3;i++){
-		  	V[i]+=(Axyz[i]-pastAxyz[i])/buflen;
-		  }
-		  sizV=magnitude(V);
-		  magV[cyc%10]=0;
-		  for (int i=0;i<3;i++){
-		  	magV[cyc%10]+=Axyz[i]*V[i]/sizV;
-		  }
-		  meanM=mean(magM);
-		  stdM=stnd(magM);
-		  meanV=mean(magV);
-		  stdV=stnd(magV);
-
-		  cyc++;
-		  if(cyc==buflen && !CycTrue){CycTrue=1;}
-		  cyc=cyc%buflen;
-		  if(CycTrue){
-		  	detect(stdV, meanV, stdM, meanM);
-		  }
-		  //===========emg&heart===========================
-		  heart_rate = msh();
-		  snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling: NO, heart: %c, heart rate: %d\n", hrstate, heart_rate);
-		  HAL_Delay(50);
-		}
-		falling =0;
-		heart_rate = msh();
 		/* Format data for transmission to AWS */
-		if(muscle_work==1){
-						snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling: NO, heart: %c, heart rate: %d\n", hrstate, heart_rate);
-				  }
-				  else{
-						snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling: NO, heart: %c, heart rate: %d\n", hrstate, heart_rate);
-				  }
-		//HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_SET);
-		//HAL_Delay(100);
-		//HAL_GPIO_WritePin(GPIOx, GPIO_Pin, GPIO_PIN_RESET);
+		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN,
+				"{\"Board_id\":\"%s\","
+						"\"Temp\": %d, \"Hum\": %d, \"Press\": %d, "
+						"\"Accel_X\": %d, \"Accel_Y\": %d, \"Accel_Z\": %d, "
+						"\"Gyro_X\": %d, \"Gyro_Y\": %d, \"Gyro_Z\": %d, "
+						"\"Magn_X\": %d, \"Magn_Y\": %d, \"Magn_Z\": %d, \"Proxi\": %d"
+						"}", "st-discovery-board-01", (int) TEMPERATURE_Value,
+				(int) HUMIDITY_Value, (int) PRESSURE_Value, ACC_Value[0],
+				ACC_Value[1], ACC_Value[2], (int) GYR_Value[0],
+				(int) GYR_Value[1], (int) GYR_Value[2], MAG_Value[0],
+				MAG_Value[1], MAG_Value[2], (int) PROXIMITY_Value);
 
 		IotLogInfo(
 				"Publishing sensor data as json string: %s of length [ %d]\n",

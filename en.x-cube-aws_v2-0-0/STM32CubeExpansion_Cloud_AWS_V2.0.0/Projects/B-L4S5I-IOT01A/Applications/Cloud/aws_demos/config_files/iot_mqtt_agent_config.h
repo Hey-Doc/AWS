@@ -102,7 +102,7 @@
  * @brief Time in milliseconds after which the TCP send operation should timeout.
  */
 #ifdef AMAZON_FREERTOS_ENABLE_UNIT_TESTS
-#define mqttconfigTCP_SEND_TIMEOUT_MS    ( 10000 )
+#define mqttconfigTCP_SEND_TIMEOUT_MS    ( 8000 )
 #else
 #define mqttconfigTCP_SEND_TIMEOUT_MS    ( 20 )
 #endif

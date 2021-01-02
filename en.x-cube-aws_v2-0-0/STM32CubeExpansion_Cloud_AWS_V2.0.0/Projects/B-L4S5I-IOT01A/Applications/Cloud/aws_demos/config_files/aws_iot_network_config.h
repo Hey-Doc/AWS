@@ -28,7 +28,7 @@
  * @file aws_iot_network_config.h
  * @brief Configuration file which enables different network types.
  */
-#ifndef AWS_IOT_NETWORK_CONFIG_H_
+#ifndef AWS_IOT-NETWORK_CONFIG_H_
 #define AWS_IOT_NETWORK_CONFIG_H_
 
 /**

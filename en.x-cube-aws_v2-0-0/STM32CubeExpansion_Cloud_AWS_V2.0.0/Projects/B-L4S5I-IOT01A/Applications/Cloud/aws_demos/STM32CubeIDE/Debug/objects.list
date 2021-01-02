@@ -38,6 +38,7 @@
 "Drivers/BSP/Components/vl53l0x/vl53l0x_platform_log.o"
 "Drivers/CMSIS/system_stm32l4xx.o"
 "Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal.o"
+"Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_adc.o"
 "Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_can.o"
 "Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_cortex.o"
 "Drivers/STM32L4xx_HAL_Driver/stm32l4xx_hal_crc.o"

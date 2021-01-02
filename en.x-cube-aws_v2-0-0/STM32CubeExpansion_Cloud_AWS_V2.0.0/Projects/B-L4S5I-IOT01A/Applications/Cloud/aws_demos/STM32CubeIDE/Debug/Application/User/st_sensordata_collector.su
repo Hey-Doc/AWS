@@ -1,6 +1,11 @@
-st_sensordata_collector.c:55:13:prvSensorsInit	8	static
-st_sensordata_collector.c:89:6:onboardSensorReaderTask	160	static
-st_sensordata_collector.c:161:5:BSP_Proximity_Init	32	static
-st_sensordata_collector.c:205:5:SetupSingleShot	56	static
-st_sensordata_collector.c:310:7:BSP_Proximity_Read	16	static
-st_sensordata_collector.c:334:6:Sensor_SetNewRange	16	static
+st_sensordata_collector.c:83:7:magnitude	24	static
+st_sensordata_collector.c:87:7:mean	24	static
+st_sensordata_collector.c:93:7:stnd	48	static
+st_sensordata_collector.c:100:6:detect	24	static
+st_sensordata_collector.c:119:5:msh	96	static
+st_sensordata_collector.c:229:13:prvSensorsInit	8	static
+st_sensordata_collector.c:263:6:onboardSensorReaderTask	64	static
+st_sensordata_collector.c:367:5:BSP_Proximity_Init	32	static
+st_sensordata_collector.c:411:5:SetupSingleShot	56	static
+st_sensordata_collector.c:516:7:BSP_Proximity_Read	16	static
+st_sensordata_collector.c:540:6:Sensor_SetNewRange	16	static

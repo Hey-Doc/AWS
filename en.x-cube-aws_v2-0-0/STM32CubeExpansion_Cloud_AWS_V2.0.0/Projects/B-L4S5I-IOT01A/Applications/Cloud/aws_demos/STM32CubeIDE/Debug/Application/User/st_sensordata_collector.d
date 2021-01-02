@@ -1,5 +1,5 @@
 Application/User/st_sensordata_collector.o: \
- C:/en.x-cube-aws_v2-0-0/STM32CubeExpansion_Cloud_AWS_V2.0.0/Projects/B-L4S5I-IOT01A/Applications/Cloud/aws_demos/Src/st_sensordata_collector.c \
+ ../Application/User/st_sensordata_collector.c \
  ../../Inc/aws_customdemo_inc.h ../../config_files/iot_config.h \
  ../../../../../../../Middlewares/Third_Party/amazon-freertos/demos/include/iot_config_common.h \
  ../../../../../../../Middlewares/Third_Party/amazon-freertos/freertos_kernel/include/FreeRTOS.h \
@@ -55,6 +55,9 @@ Application/User/st_sensordata_collector.o: \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma_ex.h \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h \
+ ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h \
+ ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h \
+ ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h \
  ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ex.h \
@@ -218,6 +221,12 @@ Application/User/st_sensordata_collector.o: \
 ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma_ex.h:
 
 ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h:
+
+../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h:
+
+../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h:
+
+../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h:
 
 ../../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h:
 

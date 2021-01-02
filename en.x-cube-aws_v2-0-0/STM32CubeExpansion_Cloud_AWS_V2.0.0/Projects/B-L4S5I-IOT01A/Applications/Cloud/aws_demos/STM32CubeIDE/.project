@@ -72,11 +72,6 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/st_sensordata_collector.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Src/st_sensordata_collector.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/st_statusled_update.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Src/st_statusled_update.c</locationURI>
@@ -385,11 +380,6 @@
 			<name>Application/AWS/config_files/aws_wifi_config.h</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/config_files/aws_wifi_config.h</locationURI>
-		</link>
-		<link>
-			<name>Application/AWS/config_files/iot_config.h</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/config_files/iot_config.h</locationURI>
 		</link>
 		<link>
 			<name>Application/AWS/config_files/iot_mqtt_agent_config.h</name>
