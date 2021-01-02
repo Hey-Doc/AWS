@@ -211,7 +211,7 @@ void onboardSensorReaderTask() {
 		}
 		falling =0;
 		/* Format data for transmission to AWS */
-		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling\n");
+		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling, meanM: %.3f\n", meanM);
 
 		IotLogInfo(
 				"Publishing sensor data as json string: %s of length [ %d]\n",
