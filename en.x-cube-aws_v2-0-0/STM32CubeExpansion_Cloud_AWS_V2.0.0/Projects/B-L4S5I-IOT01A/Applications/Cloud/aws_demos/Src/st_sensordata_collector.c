@@ -32,6 +32,8 @@ SOFTWARE.
 #include "stm32l475e_iot01_tsensor.h"
 #include "stm32l475e_iot01_magneto.h"
 #include "vl53l0x_api.h"
+#include "math.h"
+#define buflen 100
 
 #define TEMPERATURE_TASK_READ_DELAY_MS  3000
 
@@ -46,6 +48,58 @@ extern I2C_HandleTypeDef hI2cHandler;
 VL53L0X_Dev_t VL53L0XDev;
 VL53L0X_RangingMeasurementData_t RangingMeasurementData;
 int LeakyFactorFix8 = (int)( 0.6 *256);
+
+int falling=0;
+float magnitude(float *vec)
+{
+  return sqrt(pow(vec[0],2) + pow(vec[1],2) + pow(vec[2],2));
+}
+float mean(float *vec)
+{
+  float sum=0.0;
+  for (int i=0;i<10;i++){sum+=vec[i];}
+  return sum/10;
+}
+float stnd(float *vec)
+{
+  float s=0;
+  float m=mean(vec);
+  for (int i=0;i<10;i++){s+=pow((vec[i]-m),2);}
+  return sqrt(s/10);
+}
+void detect(float stdv, float meanv, float stdm, float meanm)
+{
+	if(meanv<=-0.131){
+		if(stdm<=0.055){
+			falling=0;
+		}
+		else{
+			falling=1;
+		}
+	}
+	else{
+		if(meanm<=1.11){
+			falling=1;
+		}
+		else{
+			falling=0;
+		}
+	}
+}
+int16_t axyz[3]={};
+float Axyz[3]={};
+float buffer_a[buflen][3]={};
+float V[3]={0,0,0};
+float pastAxyz[3]={0,0,0};
+float magV[10]={};
+float magM[10]={};
+float meanV=0.0;
+float stdV=0.0;
+float meanM=0.0;
+float stdM=0.0;
+float sizV=0.0;
+int cyc = 0;
+int CycTrue = 0;
 
 int BSP_Proximity_Init();
 int SetupSingleShot(RangingConfig_e rangingConfig);
@@ -121,30 +175,45 @@ void onboardSensorReaderTask() {
 	do {
 		vTaskDelay(pdMS_TO_TICKS(TEMPERATURE_TASK_READ_DELAY_MS));
 
-		TEMPERATURE_Value = BSP_TSENSOR_ReadTemp();
-		HUMIDITY_Value = BSP_HSENSOR_ReadHumidity();
-		PRESSURE_Value = BSP_PSENSOR_ReadPressure();
 		BSP_ACCELERO_AccGetXYZ(ACC_Value);
-		BSP_GYRO_GetXYZ(GYR_Value);
-		BSP_MAGNETO_GetXYZ(MAG_Value);
                 PROXIMITY_Value = BSP_Proximity_Read();
                 
 		IotLogInfo("Accelerometer [X: %d] ", ACC_Value);
 
 		pSensorPayload = pvPortMalloc(sizeof(char) * SENSOR_STATUS_MSG_BUF_LEN);
 
+		  Axyz[0]=(float)19.62*ACC_Value[0]/16384;
+		  Axyz[1]=(float)19.62*ACC_Value[1]/16384;
+		  Axyz[2]=(float)19.62*ACC_Value[2]/16384;
+		  pastAxyz[0]=buffer_a[cyc][0];
+		  pastAxyz[1]=buffer_a[cyc][1];
+		  pastAxyz[2]=buffer_a[cyc][2];
+	      buffer_a[cyc][0]=Axyz[0];
+	  	  buffer_a[cyc][1]=Axyz[1];
+	  	  buffer_a[cyc][2]=Axyz[2];
+		  magM[cyc%10]=magnitude(Axyz);
+		  for (int i=0;i<3;i++){
+		  	V[i]+=(Axyz[i]-pastAxyz[i])/buflen;
+		  }
+		  sizV=magnitude(V);
+		  magV[cyc%10]=0;
+		  for (int i=0;i<3;i++){
+		  	magV[cyc%10]+=Axyz[i]*V[i]/sizV;
+		  }
+		  meanM=mean(magM);
+		  stdM=stnd(magM);
+		  meanV=mean(magV);
+		  stdV=stnd(magV);
+
+		  cyc++;
+		  if(cyc==buflen && !CycTrue){CycTrue=1;}
+		  cyc=cyc%buflen;
+		  if(CycTrue){
+		  	detect(stdV, meanV, stdM, meanM);
+		  }
+
 		/* Format data for transmission to AWS */
-		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN,
-				"{\"Board_id\":\"%s\","
-						"\"Temp\": %d, \"Hum\": %d, \"Press\": %d, "
-						"\"Accel_X\": %d, \"Accel_Y\": %d, \"Accel_Z\": %d, "
-						"\"Gyro_X\": %d, \"Gyro_Y\": %d, \"Gyro_Z\": %d, "
-						"\"Magn_X\": %d, \"Magn_Y\": %d, \"Magn_Z\": %d, \"Proxi\": %d"
-						"}", "st-discovery-board-01", (int) TEMPERATURE_Value,
-				(int) HUMIDITY_Value, (int) PRESSURE_Value, ACC_Value[0],
-				ACC_Value[1], ACC_Value[2], (int) GYR_Value[0],
-				(int) GYR_Value[1], (int) GYR_Value[2], MAG_Value[0],
-				MAG_Value[1], MAG_Value[2], (int) PROXIMITY_Value);
+		snprintfreturn = snprintf(pSensorPayload, SENSOR_STATUS_MSG_BUF_LEN, "falling?: %d\n", falling);
 
 		IotLogInfo(
 				"Publishing sensor data as json string: %s of length [ %d]\n",
